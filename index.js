@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const config = require('config');
 const helmet = require('helmet');
 const morgan = require('morgan');
@@ -15,6 +16,11 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use('/', home);
 app.use('/api/genres', genres);
+
+mongoose.connect('mongodb://localhost:27017/vidlydb',
+    { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(_ => console.log('successfuly connected to mongodb...'))
+    .catch(err => console.log(err));
 
 if (app.get('env') === 'development') {
     app.use(morgan('tiny'));

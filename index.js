@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const config = require('config');
+const mongooseLoader = require('./loaders/mongoose');
+const config = require('./config');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const Joi = require('joi');
@@ -8,8 +8,6 @@ const genres = require('./routes/genres')
 const express = require('express');
 const app = express();
 
-console.log(`Application name: ${config.get('name')}`);
-
 app.use(express.json());
 app.use(helmet());
 app.use(express.urlencoded({ extended: false }));
@@ -17,18 +15,16 @@ app.use(express.urlencoded({ extended: false }));
 app.use('/', home);
 app.use('/api/genres', genres);
 
-mongoose.connect('mongodb://localhost:27017/vidlydb',
-    { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(_ => console.log('successfuly connected to mongodb...'))
-    .catch(err => console.log(err));
+const mongoConnection = mongooseLoader.getConnection();
+mongoConnection.then(ans => console.log(ans));
 
 if (app.get('env') === 'development') {
     app.use(morgan('tiny'));
 }
 
-const port = process.env.PORT || 3300;
-app.listen(port, console.log(`Listening on port ${port}...`));
+app.listen(config.port, console.log(`Listening on port ${port}...`));
 
+// @TODO: Move validations to proper module
 function validateGenre(genre) {
     const schema = {
         name: Joi.string().min(3).required()

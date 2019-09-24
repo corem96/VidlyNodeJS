@@ -22,7 +22,7 @@ if (app.get('env') === 'development') {
     app.use(morgan('tiny'));
 }
 
-app.listen(config.port, console.log(`Listening on port ${port}...`));
+app.listen(config.port, console.log(`Listening on port ${config.port}...`));
 
 // @TODO: Move validations to proper module
 function validateGenre(genre) {
